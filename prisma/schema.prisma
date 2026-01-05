@@ -1,0 +1,317 @@
+// MORAV RMS - Hospitality Management System Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// FRONT OFFICE MODULE
+model Room {
+  id          String   @id @default(cuid())
+  roomNumber  String   @unique
+  roomType    String
+  floor       String
+  capacity    Int
+  baseRate    Float
+  status      String   @default("Vacant") // Vacant, Booked, Checked-In, Under-Maintenance
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings    Booking[]
+  charges     RoomCharge[]
+
+  @@map("rooms")
+}
+
+model Guest {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?  @unique
+  phone       String
+  address     String?
+  idNumber    String?
+  nationality String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings    Booking[]
+  charges     RoomCharge[]
+
+  @@map("guests")
+}
+
+model Booking {
+  id            String    @id @default(cuid())
+  bookingNumber String    @unique
+  guestId       String
+  roomId        String
+  checkInDate   DateTime
+  checkOutDate  DateTime
+  adults        Int
+  children      Int       @default(0)
+  totalAmount   Float
+  status        String    @default("Booked") // Booked, Checked-In, Checked-Out, Cancelled
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  guest         Guest     @relation(fields: [guestId], references: [id])
+  room          Room      @relation(fields: [roomId], references: [id])
+  charges       RoomCharge[]
+  orders        Order[]
+
+  @@map("bookings")
+}
+
+model RoomCharge {
+  id          String   @id @default(cuid())
+  bookingId   String
+  guestId     String
+  roomId      String
+  description String
+  amount      Float
+  chargeType  String   // Room, Restaurant, Other
+  createdAt   DateTime @default(now())
+
+  booking     Booking @relation(fields: [bookingId], references: [id])
+  guest       Guest   @relation(fields: [guestId], references: [id])
+  room        Room    @relation(fields: [roomId], references: [id])
+
+  @@map("room_charges")
+}
+
+// INVENTORY MODULE
+model InventoryItem {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  category      String
+  unit          String
+  currentStock  Float    @default(0)
+  minStockLevel Float    @default(0)
+  unitCost      Float
+  supplier      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  stockMovements StockMovement[]
+  recipeItems    RecipeItem[]
+
+  @@map("inventory_items")
+}
+
+model StockMovement {
+  id          String   @id @default(cuid())
+  itemId      String
+  movementType String  // Stock-In, Stock-Out, Sale
+  quantity    Float
+  unitCost    Float?
+  reason      String?
+  reference   String?  // Can reference sale ID or other transaction
+  createdAt   DateTime @default(now())
+
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+
+  @@map("stock_movements")
+}
+
+// RESTAURANT POS MODULE
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  price       Float
+  isAvailable Boolean  @default(true)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  recipeItems RecipeItem[]
+  orderItems  OrderItem[]
+
+  @@map("menu_items")
+}
+
+model RecipeItem {
+  id        String @id @default(cuid())
+  menuItemId String
+  itemId    String
+  quantity  Float
+
+  menuItem   MenuItem      @relation(fields: [menuItemId], references: [id])
+  item      InventoryItem @relation(fields: [itemId], references: [id])
+
+  @@unique([menuItemId, itemId])
+  @@map("recipe_items")
+}
+
+model Order {
+  id            String    @id @default(cuid())
+  orderNumber   String    @unique
+  orderType     String    // Dine-In, Takeaway, Room-Service
+  status        String    @default("Pending") // Pending, Preparing, Ready, Completed, Cancelled
+  subtotal      Float
+  discount      Float     @default(0)
+  tax           Float     @default(0)
+  totalAmount   Float
+  bookingId     String?   // For room charges
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  booking       Booking?  @relation(fields: [bookingId], references: [id])
+  items         OrderItem[]
+  payments      Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  menuItemId String
+  quantity  Int
+  unitPrice Float
+  subtotal  Float
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  menuItem  MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  orderId     String
+  paymentMethod String // Cash, Card, Room-Charge
+  amount      Float
+  status      String   @default("Paid")
+  createdAt   DateTime @default(now())
+
+  order       Order    @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
+}
+
+// PAYROLL MODULE
+model Employee {
+  id          String   @id @default(cuid())
+  employeeId  String   @unique
+  firstName   String
+  lastName    String
+  email       String?  @unique
+  phone       String
+  role        String
+  department  String
+  baseSalary  Float
+  startDate   DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attendance  Attendance[]
+  payslips    Payslip[]
+
+  @@map("employees")
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  employeeId  String
+  date        DateTime
+  clockIn     DateTime?
+  clockOut    DateTime?
+  breakStart  DateTime?
+  breakEnd    DateTime?
+  totalHours  Float?
+  overtimeHours Float?  @default(0)
+  status      String   @default("Absent") // Present, Absent, Late, Half-Day
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, date])
+  @@map("attendance")
+}
+
+model Payslip {
+  id            String   @id @default(cuid())
+  employeeId    String
+  payPeriod     String   // e.g., "2024-01"
+  baseSalary    Float
+  overtimePay   Float    @default(0)
+  deductions    Float    @default(0)
+  allowances    Float    @default(0)
+  grossPay      Float
+  netPay        Float
+  status        String   @default("Draft") // Draft, Approved, Paid
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  employee      Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, payPeriod])
+  @@map("payslips")
+}
+
+// ACCOUNTING MODULE
+model Account {
+  id          String   @id @default(cuid())
+  accountCode String   @unique
+  name        String
+  type        String   // Asset, Liability, Equity, Revenue, Expense
+  category    String
+  balance     Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  journalLines JournalLine[]
+
+  @@map("accounts")
+}
+
+model JournalEntry {
+  id            String   @id @default(cuid())
+  entryNumber   String   @unique
+  date          DateTime
+  description   String
+  reference     String?  // Can reference other module IDs
+  totalDebit    Float
+  totalCredit   Float
+  status        String   @default("Posted")
+  createdAt     DateTime @default(now())
+
+  lines         JournalLine[]
+
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id              String @id @default(cuid())
+  journalEntryId  String
+  accountId       String
+  debit           Float  @default(0)
+  credit          Float  @default(0)
+  description     String?
+
+  journalEntry    JournalEntry @relation(fields: [journalEntryId], references: [id])
+  account         Account      @relation(fields: [accountId], references: [id])
+
+  @@map("journal_lines")
+}
+
+model FinancialReport {
+  id          String   @id @default(cuid())
+  reportType  String   // P&L, Balance-Sheet, Cash-Flow, Trial-Balance
+  period      String   // e.g., "2024-01", "Q1-2024"
+  data        String   // JSON data for the report
+  generatedAt DateTime @default(now())
+
+  @@map("financial_reports")
+}
