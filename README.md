@@ -1,141 +1,143 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# MORAV RMS - Hospitality Management System
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+A comprehensive, full-stack hospitality management solution designed for hotels, restaurants, and hospitality businesses. MORAV RMS integrates five core modules into a unified system with seamless data flow and professional user experience.
 
-## ✨ Technology Stack
+## 🏨 Overview
+MORAV RMS (Morav Hospitality Management System) is a production-ready system that provides complete operational control for hospitality businesses. The system features a modern, responsive interface with real-time data synchronization across all modules.
 
-This scaffold provides a robust foundation built with:
+## ✨ Key Features
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+### 🏨 Front Office Module
+* **Room Status Dashboard**: Visual grid showing all rooms with real-time status.
+* **Guest Management**: Complete CRUD operations for guest registration and management.
+* **Booking System**: Direct room booking with one-click functionality.
+* **Room Rate Management**: Dynamic pricing for different room types.
+* **Maintenance Control**: Toggle room maintenance status directly from dashboard.
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+### 🍽️ Restaurant POS Module
+* **Menu Management**: Full CRUD for menu items with categories and pricing.
+* **Order Taking Interface**: Touch-friendly grid layout for quick item selection.
+* **Real-time Order Processing**: Send orders to kitchen functionality.
+* **Room Charge Integration**: Charge orders directly to guest rooms.
+* **Bill Generation**: Complete billing system with discounts and taxes.
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+### 📦 Inventory Module
+* **Stock Management**: Complete stock in/out functionality with tracking.
+* **Re-order Alerts**: Automated alerts when stock falls below minimum levels.
+* **Supplier Management**: Track suppliers and purchase information.
+* **Real-time Integration**: Automatic stock deduction from restaurant sales.
+* **Movement History**: Complete audit trail of all stock movements.
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Axios** - Promise-based HTTP client
+### 💵 Payroll Module
+* **Employee Management**: Complete employee records with roles and departments.
+* **Attendance Tracking**: Clock in/out functionality with overtime calculation.
+* **Payslip Generation**: Automated payslip creation with deductions and allowances.
+* **Download Functionality**: Export payslips as downloadable files.
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation Node.js and TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+### 📈 Accounting Module
+* **Financial Reports**: Comprehensive financial reporting with interactive charts.
+* **Profit & Loss Statement**: Revenue, expenses, and profit analysis.
+* **Balance Sheet**: Assets, liabilities, and equity breakdown.
+* **Cash Flow Statement**: Operating, investing, and financing activities.
+* **Trial Balance**: Complete account listing with debits/credits.
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+## 🛠️ Technology Stack
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### Core Framework
+* **Frontend**: Next.js 15 with App Router
+* **Language**: TypeScript 5
+* **Database**: SQLite with Prisma ORM
+* **Styling**: Tailwind CSS 4 with shadcn/ui components
 
-## 🎯 Why This Scaffold?
+### Key Libraries
+* **UI Components**: shadcn/ui (New York style)
+* **Icons**: Lucide React
+* **Charts**: Recharts
+* **Forms**: React Hook Form with Zod validation
+* **State Management**: Zustand & TanStack Query
 
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
+## 🚀 Getting Started
 
-## 🚀 Quick Start
-
+### Installation
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd morav-rms
+
 # Install dependencies
 npm install
 
-# Start development server
+# Set up the database
+npm run db:push
+npm run db:generate
+
+# Start the development server
 npm run dev
+### Environment Variables
+Create a `.env` file in the root directory:
 
-# Build for production
-npm run build
-
-# Start production server
-npm start
 ```
-
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
-
-## 🤖 Powered by Z.ai
-
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
-
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
-
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
+env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
+morav-rms/
+├── src/
+│   ├── app/                 # Next.js App Router
+│   ├── components/
+│   │   ├── ui/             # shadcn/ui components
+│   │   └── modules/        # FrontOffice, Restaurant, Inventory, etc.
+│   ├── lib/                 # db connection and utils
+│   └── types/               # TypeScript definitions
+├── prisma/
+│   └── schema.prisma       # Database schema
+└── public/                 # Assets and logos
 ```
 
-## 🎨 Available Features & Components
+### 💾 Database Schema
 
-This scaffold includes a comprehensive set of modern web development tools:
+* **Core Tables**: `rooms`, `guests`, `bookings`, `menu_items`, `orders`, `inventory_items`, `employees`, `attendance`, `payslips`, `accounts`, `journal_entries`.
+* **Relationships**: 
+    * Bookings link guests to rooms.
+    * Orders link to menu items and can be charged to rooms.
+    * Inventory deductions trigger automatically on restaurant sales.
+    * All financial data flows seamlessly to the Accounting module.
 
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
+### 🎨 Design System
 
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
+* **Currency**: Nigerian Naira (₦) - Localized formatting for all financial data.
+* **Visual Identity**: Professional blue and purple gradients with a modern sans-serif typeface.
+* **Responsive**: Mobile-first approach with full dark mode support.
 
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
+### 🛠️ Code Quality
+  
+ *   **TypeScript**: Full type safety across the entire application.
+ *   **ESLint**: Enforced code linting and formatting standards.
+ *   **Prettier**: Automated code formatting for consistency.
+ *   **Husky**: Git hooks integrated for pre-commit checks.
 
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Axios + TanStack Query
-- **State Management**: Simple and scalable with Zustand
+###  📊 Demo Data
+The application comes pre-populated with realistic demo data:
+*    **4 Rooms**: Different types (Standard, Deluxe, Suite).
+*    **2 Guests**: Sample guest profiles.
+*    **6 Menu Items**: Restaurant menu with categories.
+*    **5 Inventory Items**: Stock items with re-order levels.
+*    **3 Employees**: Staff across different departments.
 
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
+### 🚀 Deployment
+---
+Production Build
+Bash
 
-## 🤝 Get Started with Z.ai
+npm run build
+Start Production Server
+Bash
 
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
-
+npm run start
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+Built with ❤️ for the hospitality industry. MORAV RMS 🚀
