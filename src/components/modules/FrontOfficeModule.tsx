@@ -20,7 +20,8 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Users
+  Users,
+  TrendingUp
 } from 'lucide-react'
 
 interface Room {
@@ -64,6 +65,27 @@ const currencyFormatter = new Intl.NumberFormat('en-NG', {
   maximumFractionDigits: 0,
 })
 
+function Sparkline({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 60 24" fill="none">
+      <path
+        d="M0 20 L10 16 L20 18 L30 12 L40 14 L50 8 L60 4"
+        stroke="#D9F99D"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M50 8 L60 4"
+        stroke="#86EFAC"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export default function FrontOfficeModule() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [guests, setGuests] = useState<Guest[]>([])
@@ -77,7 +99,6 @@ export default function FrontOfficeModule() {
   const [showViewGuestDialog, setShowViewGuestDialog] = useState(false)
   const [editMode, setEditMode] = useState(false)
 
-  // Form states
   const [guestForm, setGuestForm] = useState({
     firstName: '',
     lastName: '',
@@ -112,7 +133,6 @@ export default function FrontOfficeModule() {
 
   const fetchInitialData = async () => {
     try {
-      // Mock data for now - will be replaced with API calls
       const mockRooms: Room[] = [
         { id: '1', roomNumber: '101', roomType: 'Standard', floor: '1', capacity: 2, baseRate: 15000, status: 'Vacant' },
         { id: '2', roomNumber: '102', roomType: 'Standard', floor: '1', capacity: 2, baseRate: 15000, status: 'Checked-In' },
@@ -232,7 +252,6 @@ export default function FrontOfficeModule() {
       children: 0
     })
 
-    // Update room status
     setRooms(rooms.map(r => 
       r.id === room.id ? { ...r, status: 'Booked' } : r
     ))
@@ -262,7 +281,6 @@ export default function FrontOfficeModule() {
   }
 
   const handleQuickBookRoom = async (room: Room) => {
-    // Create a temporary guest for quick booking
     const tempGuest: Guest = {
       id: Date.now().toString(),
       firstName: 'Walk-In',
@@ -290,7 +308,6 @@ export default function FrontOfficeModule() {
     setBookings([...bookings, newBooking])
     setGuests([...guests, tempGuest])
     
-    // Update room status
     setRooms(rooms.map(r => 
       r.id === room.id ? { ...r, status: 'Booked' } : r
     ))
@@ -298,21 +315,21 @@ export default function FrontOfficeModule() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Vacant': return 'bg-green-100 text-green-800'
-      case 'Booked': return 'bg-blue-100 text-blue-800'
-      case 'Checked-In': return 'bg-purple-100 text-purple-800'
-      case 'Under-Maintenance': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'Vacant': return 'bg-[#D9F99D] text-emerald-700'
+      case 'Booked': return 'bg-[#FDA4AF] text-rose-700'
+      case 'Checked-In': return 'bg-[#D9F99D] text-emerald-800'
+      case 'Under-Maintenance': return 'bg-red-100 text-red-700'
+      default: return 'bg-slate-100 text-slate-700'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Vacant': return <CheckCircle className="w-4 h-4" />
-      case 'Booked': return <Calendar className="w-4 h-4" />
-      case 'Checked-In': return <Users className="w-4 h-4" />
-      case 'Under-Maintenance': return <AlertCircle className="w-4 h-4" />
-      default: return <XCircle className="w-4 h-4" />
+      case 'Vacant': return <CheckCircle className="w-3 h-3" />
+      case 'Booked': return <Calendar className="w-3 h-3" />
+      case 'Checked-In': return <Users className="w-3 h-3" />
+      case 'Under-Maintenance': return <AlertCircle className="w-3 h-3" />
+      default: return <XCircle className="w-3 h-3" />
     }
   }
 
@@ -322,70 +339,104 @@ export default function FrontOfficeModule() {
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Rooms</CardTitle>
-            <Bed className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{rooms.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Vacant Rooms</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {rooms.filter(r => r.status === 'Vacant').length}
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Rooms</p>
+                <p className="text-3xl font-bold text-slate-900 mt-1">{rooms.length}</p>
+              </div>
+              <div className="w-16 h-8">
+                <Sparkline className="w-full h-full" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Occupied Rooms</CardTitle>
-            <Users className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {rooms.filter(r => r.status === 'Checked-In').length}
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Vacant</p>
+                <p className="text-3xl font-bold text-emerald-600 mt-1">
+                  {rooms.filter(r => r.status === 'Vacant').length}
+                </p>
+              </div>
+              <div className="w-16 h-8">
+                <Sparkline className="w-full h-full" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Guests</CardTitle>
-            <UserPlus className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{guests.length}</div>
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Occupied</p>
+                <p className="text-3xl font-bold text-rose-500 mt-1">
+                  {rooms.filter(r => r.status === 'Checked-In').length}
+                </p>
+              </div>
+              <div className="w-16 h-8">
+                <Sparkline className="w-full h-full" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Guests</p>
+                <p className="text-3xl font-bold text-slate-900 mt-1">{guests.length}</p>
+              </div>
+              <div className="w-16 h-8">
+                <Sparkline className="w-full h-full" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="rooms" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="rooms">Room Status</TabsTrigger>
-          <TabsTrigger value="guests">Guest Management</TabsTrigger>
-          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+        <TabsList className="bg-white p-1 rounded-xl shadow-sm border-0">
+          <TabsTrigger 
+            value="rooms" 
+            className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900"
+          >
+            Room Status
+          </TabsTrigger>
+          <TabsTrigger 
+            value="guests" 
+            className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900"
+          >
+            Guest Management
+          </TabsTrigger>
+          <TabsTrigger 
+            value="bookings" 
+            className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900"
+          >
+            Bookings
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="rooms" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Room Status Dashboard</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Room Status Dashboard</h3>
             <Dialog open={showRoomDialog} onOpenChange={setShowRoomDialog}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                   <Bed className="w-4 h-4 mr-2" />
                   Add Room
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="rounded-2xl">
                 <DialogHeader>
-                  <DialogTitle>Add New Room</DialogTitle>
+                  <DialogTitle className="text-slate-900">Add New Room</DialogTitle>
                   <DialogDescription>
                     Add a new room to the hotel inventory
                   </DialogDescription>
@@ -445,7 +496,7 @@ export default function FrontOfficeModule() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddRoom}>Add Room</Button>
+                  <Button onClick={handleAddRoom} className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">Add Room</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -453,36 +504,35 @@ export default function FrontOfficeModule() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {rooms.map((room) => (
-              <Card key={room.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+              <Card key={room.id} className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                <CardHeader className="pb-3 pt-5 px-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-lg">{room.roomNumber}</CardTitle>
-                      <CardDescription>{room.roomType} - Floor {room.floor}</CardDescription>
+                      <CardTitle className="text-2xl font-bold text-slate-900">{room.roomNumber}</CardTitle>
+                      <CardDescription className="text-slate-500 mt-1">{room.roomType} • Floor {room.floor}</CardDescription>
                     </div>
-                    <Badge className={getStatusColor(room.status)}>
-                      <div className="flex items-center space-x-1">
-                        {getStatusIcon(room.status)}
-                        <span>{room.status}</span>
-                      </div>
+                    <Badge className={`${getStatusColor(room.status)} flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium`}>
+                      {getStatusIcon(room.status)}
+                      <span>{room.status}</span>
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
+                <CardContent className="px-5 pb-5 pt-0">
+                  <div className="space-y-3 pt-2">
                     <div className="flex justify-between text-sm">
-                      <span>Capacity:</span>
-                      <span>{room.capacity} guests</span>
+                      <span className="text-slate-500">Capacity:</span>
+                      <span className="font-medium text-slate-900">{room.capacity} guests</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Base Rate:</span>
-                      <span className="font-semibold">{currencyFormatter.format(room.baseRate)}</span>
+                      <span className="text-slate-500">Base Rate:</span>
+                      <span className="font-semibold text-slate-900">{currencyFormatter.format(room.baseRate)}</span>
                     </div>
-                    <div className="flex space-x-2 pt-2">
+                    <div className="flex space-x-3 pt-3">
                       {room.status === 'Vacant' && (
                         <Button 
                           size="sm" 
-                          variant="outline"
+                          variant="ghost"
+                          className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                           onClick={() => handleQuickBookRoom(room)}
                         >
                           Book Room
@@ -490,7 +540,8 @@ export default function FrontOfficeModule() {
                       )}
                       <Button 
                         size="sm" 
-                        variant="outline"
+                        variant="ghost"
+                        className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                         onClick={() => {
                           const newStatus = room.status === 'Vacant' ? 'Under-Maintenance' : 'Vacant'
                           updateRoomStatus(room.id, newStatus)
@@ -508,17 +559,17 @@ export default function FrontOfficeModule() {
 
         <TabsContent value="guests" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Guest Management</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Guest Management</h3>
             <Dialog open={showGuestDialog} onOpenChange={setShowGuestDialog}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                   <UserPlus className="w-4 h-4 mr-2" />
                   Add Guest
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl rounded-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editMode ? 'Edit Guest' : 'Add New Guest'}</DialogTitle>
+                  <DialogTitle className="text-slate-900">{editMode ? 'Edit Guest' : 'Add New Guest'}</DialogTitle>
                   <DialogDescription>
                     {editMode ? 'Update guest information' : 'Register a new guest in the system'}
                   </DialogDescription>
@@ -589,7 +640,7 @@ export default function FrontOfficeModule() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={editMode ? handleUpdateGuest : handleAddGuest}>
+                  <Button onClick={editMode ? handleUpdateGuest : handleAddGuest} className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                     {editMode ? 'Update Guest' : 'Add Guest'}
                   </Button>
                 </DialogFooter>
@@ -599,35 +650,35 @@ export default function FrontOfficeModule() {
 
           <div className="grid gap-4">
             {guests.map((guest) => (
-              <Card key={guest.id}>
-                <CardHeader>
+              <Card key={guest.id} className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                <CardHeader className="pb-3 pt-5 px-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>{guest.firstName} {guest.lastName}</CardTitle>
-                      <CardDescription>{guest.email} • {guest.phone}</CardDescription>
+                      <CardTitle className="text-lg text-slate-900">{guest.firstName} {guest.lastName}</CardTitle>
+                      <CardDescription className="text-slate-500">{guest.email} • {guest.phone}</CardDescription>
                     </div>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => handleViewGuest(guest)}>
+                      <Button size="sm" variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100" onClick={() => handleViewGuest(guest)}>
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEditGuest(guest)}>
+                      <Button size="sm" variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100" onClick={() => handleEditGuest(guest)}>
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-5 pb-5 pt-0">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Address:</span> {guest.address || 'N/A'}
+                      <span className="font-medium text-slate-900">Address:</span> <span className="text-slate-500">{guest.address || 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="font-medium">Nationality:</span> {guest.nationality || 'N/A'}
+                      <span className="font-medium text-slate-900">Nationality:</span> <span className="text-slate-500">{guest.nationality || 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="font-medium">ID Number:</span> {guest.idNumber || 'N/A'}
+                      <span className="font-medium text-slate-900">ID Number:</span> <span className="text-slate-500">{guest.idNumber || 'N/A'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -638,17 +689,17 @@ export default function FrontOfficeModule() {
 
         <TabsContent value="bookings" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Bookings</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Bookings</h3>
             <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                   <Calendar className="w-4 h-4 mr-2" />
                   New Booking
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="rounded-2xl">
                 <DialogHeader>
-                  <DialogTitle>Create New Booking</DialogTitle>
+                  <DialogTitle className="text-slate-900">Create New Booking</DialogTitle>
                   <DialogDescription>
                     Book a room for a guest
                   </DialogDescription>
@@ -726,7 +777,7 @@ export default function FrontOfficeModule() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddBooking}>Create Booking</Button>
+                  <Button onClick={handleAddBooking} className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">Create Booking</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -734,12 +785,12 @@ export default function FrontOfficeModule() {
 
           <div className="grid gap-4">
             {bookings.map((booking) => (
-              <Card key={booking.id}>
-                <CardHeader>
+              <Card key={booking.id} className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                <CardHeader className="pb-3 pt-5 px-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>Booking #{booking.bookingNumber}</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-lg text-slate-900">Booking #{booking.bookingNumber}</CardTitle>
+                      <CardDescription className="text-slate-500">
                         {booking.guest.firstName} {booking.guest.lastName} • Room {booking.room.roomNumber}
                       </CardDescription>
                     </div>
@@ -748,19 +799,19 @@ export default function FrontOfficeModule() {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-5 pb-5 pt-0">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Check-in:</span> {new Date(booking.checkInDate).toLocaleDateString()}
+                      <span className="font-medium text-slate-900">Check-in:</span> <span className="text-slate-500">{new Date(booking.checkInDate).toLocaleDateString()}</span>
                     </div>
                     <div>
-                      <span className="font-medium">Check-out:</span> {new Date(booking.checkOutDate).toLocaleDateString()}
+                      <span className="font-medium text-slate-900">Check-out:</span> <span className="text-slate-500">{new Date(booking.checkOutDate).toLocaleDateString()}</span>
                     </div>
                     <div>
-                      <span className="font-medium">Guests:</span> {booking.adults}A/{booking.children}C
+                      <span className="font-medium text-slate-900">Guests:</span> <span className="text-slate-500">{booking.adults}A/{booking.children}C</span>
                     </div>
                     <div>
-                      <span className="font-medium">Total:</span> {currencyFormatter.format(booking.totalAmount)}
+                      <span className="font-medium text-slate-900">Total:</span> <span className="text-slate-500">{currencyFormatter.format(booking.totalAmount)}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -772,9 +823,9 @@ export default function FrontOfficeModule() {
 
       {/* View Guest Dialog */}
       <Dialog open={showViewGuestDialog} onOpenChange={setShowViewGuestDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Guest Details</DialogTitle>
+            <DialogTitle className="text-slate-900">Guest Details</DialogTitle>
             <DialogDescription>
               Complete information for {selectedGuest?.firstName} {selectedGuest?.lastName}
             </DialogDescription>
@@ -784,47 +835,47 @@ export default function FrontOfficeModule() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>First Name</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.firstName}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.firstName}</div>
                 </div>
                 <div>
                   <Label>Last Name</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.lastName}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.lastName}</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Email</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.email}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.email}</div>
                 </div>
                 <div>
                   <Label>Phone</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.phone}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.phone}</div>
                 </div>
               </div>
               <div>
                 <Label>Address</Label>
-                <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.address || 'N/A'}</div>
+                <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.address || 'N/A'}</div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>ID Number</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.idNumber || 'N/A'}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.idNumber || 'N/A'}</div>
                 </div>
                 <div>
                   <Label>Nationality</Label>
-                  <div className="p-2 border rounded-md bg-gray-50">{selectedGuest.nationality || 'N/A'}</div>
+                  <div className="p-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-900">{selectedGuest.nationality || 'N/A'}</div>
                 </div>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowViewGuestDialog(false)}>
+            <Button variant="outline" onClick={() => setShowViewGuestDialog(false)} className="border-slate-200">
               Close
             </Button>
             <Button onClick={() => {
               setShowViewGuestDialog(false)
               handleEditGuest(selectedGuest!)
-            }}>
+            }} className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
               <Edit className="w-4 h-4 mr-2" />
               Edit Guest
             </Button>

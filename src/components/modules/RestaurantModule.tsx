@@ -80,7 +80,6 @@ export default function RestaurantModule() {
   const [editMode, setEditMode] = useState(false)
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null)
 
-  // Form states
   const [menuItemForm, setMenuItemForm] = useState({
     name: '',
     description: '',
@@ -103,7 +102,6 @@ export default function RestaurantModule() {
 
   const fetchInitialData = async () => {
     try {
-      // Mock data for now
       const mockMenuItems: MenuItem[] = [
         { id: '1', name: 'Jollof Rice', description: 'Classic Nigerian jollof rice', category: 'Main Course', price: 2500, isAvailable: true },
         { id: '2', name: 'Suya', description: 'Spicy grilled meat skewers', category: 'Appetizers', price: 1500, isAvailable: true },
@@ -245,7 +243,7 @@ export default function RestaurantModule() {
   const calculateOrderTotal = () => {
     const subtotal = currentOrder.reduce((sum, item) => sum + item.subtotal, 0)
     const discount = orderForm.discount
-    const tax = subtotal * 0.05 // 5% tax
+    const tax = subtotal * 0.05
     const total = subtotal - discount + tax
 
     return { subtotal, discount, tax, total }
@@ -280,7 +278,6 @@ export default function RestaurantModule() {
 
   const handleSendToKitchen = (order: Order) => {
     console.log('Sending to kitchen:', order)
-    // In a real app, this would send to a kitchen display system
     alert(`Order ${order.orderNumber} sent to kitchen!`)
   }
 
@@ -288,10 +285,10 @@ export default function RestaurantModule() {
     switch (status) {
       case 'Pending': return 'bg-yellow-100 text-yellow-800'
       case 'Preparing': return 'bg-blue-100 text-blue-800'
-      case 'Ready': return 'bg-green-100 text-green-800'
-      case 'Completed': return 'bg-gray-100 text-gray-800'
-      case 'Cancelled': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'Ready': return 'bg-[#D9F99D] text-emerald-700'
+      case 'Completed': return 'bg-slate-100 text-slate-700'
+      case 'Cancelled': return 'bg-red-100 text-red-700'
+      default: return 'bg-slate-100 text-slate-700'
     }
   }
 
@@ -305,89 +302,96 @@ export default function RestaurantModule() {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{orders.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
-              {orders.filter(o => o.status === 'Pending').length}
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Orders</p>
+                <p className="text-3xl font-bold text-slate-900 mt-1">{orders.length}</p>
+              </div>
+              <ShoppingCart className="w-5 h-5 text-slate-400" />
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Menu Items</CardTitle>
-            <Utensils className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{menuItems.length}</div>
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Pending Orders</p>
+                <p className="text-3xl font-bold text-yellow-600 mt-1">
+                  {orders.filter(o => o.status === 'Pending').length}
+                </p>
+              </div>
+              <Clock className="w-5 h-5 text-yellow-500" />
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {currencyFormatter.format(orders.reduce((sum, o) => sum + o.totalAmount, 0))}
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Menu Items</p>
+                <p className="text-3xl font-bold text-emerald-600 mt-1">{menuItems.length}</p>
+              </div>
+              <Utensils className="w-5 h-5 text-emerald-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Today's Revenue</p>
+                <p className="text-3xl font-bold text-blue-600 mt-1">
+                  {currencyFormatter.format(orders.reduce((sum, o) => sum + o.totalAmount, 0))}
+                </p>
+              </div>
+              <DollarSign className="w-5 h-5 text-blue-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="pos" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="pos">Point of Sale</TabsTrigger>
-          <TabsTrigger value="menu">Menu Management</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
+        <TabsList className="bg-white p-1 rounded-xl shadow-sm border-0">
+          <TabsTrigger value="pos" className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900">Point of Sale</TabsTrigger>
+          <TabsTrigger value="menu" className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900">Menu Management</TabsTrigger>
+          <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-[#D9F99D] data-[state=active]:text-slate-900">Orders</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pos" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Menu Items Grid */}
             <div className="lg:col-span-2">
-              <Card>
+              <Card className="rounded-2xl border-0 shadow-sm bg-white">
                 <CardHeader>
-                  <CardTitle>Menu Items</CardTitle>
-                  <CardDescription>Click items to add to current order</CardDescription>
+                  <CardTitle className="text-slate-900">Menu Items</CardTitle>
+                  <CardDescription className="text-slate-500">Click items to add to current order</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {categories.map((category) => (
                       <div key={category}>
-                        <h4 className="font-semibold text-sm text-muted-foreground mb-2">{category}</h4>
+                        <h4 className="font-semibold text-sm text-slate-500 mb-2">{category}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {menuItems
                             .filter(item => item.category === category)
                             .map((item) => (
                               <Card 
                                 key={item.id} 
-                                className={`cursor-pointer transition-all hover:shadow-md ${
+                                className={`cursor-pointer transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 rounded-xl border-0 shadow-sm ${
                                   !item.isAvailable ? 'opacity-50' : ''
                                 }`}
                                 onClick={() => item.isAvailable && handleAddToOrder(item)}
                               >
                                 <CardContent className="p-4">
                                   <div className="flex justify-between items-start mb-2">
-                                    <h5 className="font-medium text-sm">{item.name}</h5>
-                                    <Badge variant={item.isAvailable ? "default" : "secondary"}>
+                                    <h5 className="font-medium text-sm text-slate-900">{item.name}</h5>
+                                    <Badge variant={item.isAvailable ? "default" : "secondary"} className={item.isAvailable ? 'bg-[#D9F99D] text-emerald-700' : 'bg-slate-100 text-slate-500'}>
                                       {item.isAvailable ? 'Available' : 'Hidden'}
                                     </Badge>
                                   </div>
-                                  <p className="text-xs text-muted-foreground mb-2">{item.description}</p>
-                                  <div className="font-bold text-sm">{currencyFormatter.format(item.price)}</div>
+                                  <p className="text-xs text-slate-500 mb-2">{item.description}</p>
+                                  <div className="font-bold text-sm text-slate-900">{currencyFormatter.format(item.price)}</div>
                                 </CardContent>
                               </Card>
                             ))}
@@ -399,19 +403,18 @@ export default function RestaurantModule() {
               </Card>
             </div>
 
-            {/* Current Order */}
             <div className="space-y-4">
-              <Card>
+              <Card className="rounded-2xl border-0 shadow-sm bg-white">
                 <CardHeader>
-                  <CardTitle>Current Order</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-slate-900">Current Order</CardTitle>
+                  <CardDescription className="text-slate-500">
                     {currentOrder.length} items • {currencyFormatter.format(total)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="orderType">Order Type</Label>
+                      <Label htmlFor="orderType" className="text-slate-700">Order Type</Label>
                       <Select value={orderForm.orderType} onValueChange={(value) => setOrderForm({...orderForm, orderType: value})}>
                         <SelectTrigger>
                           <SelectValue />
@@ -427,10 +430,10 @@ export default function RestaurantModule() {
                     <ScrollArea className="h-64">
                       <div className="space-y-2">
                         {currentOrder.map((item) => (
-                          <div key={item.id} className="flex items-center justify-between p-2 border rounded">
+                          <div key={item.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
                             <div className="flex-1">
-                              <div className="font-medium text-sm">{item.menuItem.name}</div>
-                              <div className="text-xs text-muted-foreground">
+                              <div className="font-medium text-sm text-slate-900">{item.menuItem.name}</div>
+                              <div className="text-xs text-slate-500">
                                 {currencyFormatter.format(item.unitPrice)} x {item.quantity}
                               </div>
                             </div>
@@ -438,14 +441,16 @@ export default function RestaurantModule() {
                               <Button 
                                 size="sm" 
                                 variant="outline"
+                                className="h-7 w-7 p-0"
                                 onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                               >
                                 -
                               </Button>
-                              <span className="w-8 text-center">{item.quantity}</span>
+                              <span className="w-8 text-center text-sm">{item.quantity}</span>
                               <Button 
                                 size="sm" 
                                 variant="outline"
+                                className="h-7 w-7 p-0"
                                 onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                               >
                                 +
@@ -453,6 +458,7 @@ export default function RestaurantModule() {
                               <Button 
                                 size="sm" 
                                 variant="destructive"
+                                className="h-7"
                                 onClick={() => handleRemoveFromOrder(item.id)}
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -463,38 +469,39 @@ export default function RestaurantModule() {
                       </div>
                     </ScrollArea>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 p-3 bg-slate-50 rounded-lg">
                       <div className="flex justify-between text-sm">
-                        <span>Subtotal:</span>
-                        <span>{currencyFormatter.format(subtotal)}</span>
+                        <span className="text-slate-500">Subtotal:</span>
+                        <span className="text-slate-900">{currencyFormatter.format(subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Discount:</span>
-                        <span>-{currencyFormatter.format(discount)}</span>
+                        <span className="text-slate-500">Discount:</span>
+                        <span className="text-slate-900">-{currencyFormatter.format(discount)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Tax (5%):</span>
-                        <span>{currencyFormatter.format(tax)}</span>
+                        <span className="text-slate-500">Tax (5%):</span>
+                        <span className="text-slate-900">{currencyFormatter.format(tax)}</span>
                       </div>
-                      <div className="flex justify-between font-bold">
-                        <span>Total:</span>
-                        <span>{currencyFormatter.format(total)}</span>
+                      <div className="flex justify-between font-bold pt-2 border-t border-slate-200">
+                        <span className="text-slate-900">Total:</span>
+                        <span className="text-slate-900">{currencyFormatter.format(total)}</span>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="notes">Notes</Label>
+                      <Label htmlFor="notes" className="text-slate-700">Notes</Label>
                       <Textarea
                         id="notes"
                         placeholder="Order notes..."
                         value={orderForm.notes}
                         onChange={(e) => setOrderForm({...orderForm, notes: e.target.value})}
+                        className="border-slate-200 focus:border-[#D9F99D] focus:ring-[#D9F99D]"
                       />
                     </div>
 
                     <div className="flex space-x-2">
                       <Button 
-                        className="flex-1"
+                        className="flex-1 bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80"
                         onClick={handleCreateOrder}
                         disabled={currentOrder.length === 0}
                       >
@@ -505,6 +512,7 @@ export default function RestaurantModule() {
                         variant="outline"
                         onClick={() => setCurrentOrder([])}
                         disabled={currentOrder.length === 0}
+                        className="border-slate-200"
                       >
                         Clear
                       </Button>
@@ -518,40 +526,42 @@ export default function RestaurantModule() {
 
         <TabsContent value="menu" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Menu Management</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Menu Management</h3>
             <Dialog open={showMenuItemDialog} onOpenChange={setShowMenuItemDialog}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Menu Item
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="rounded-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editMode ? 'Edit Menu Item' : 'Add Menu Item'}</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-slate-900">{editMode ? 'Edit Menu Item' : 'Add Menu Item'}</DialogTitle>
+                  <DialogDescription className="text-slate-500">
                     {editMode ? 'Update menu item information' : 'Add a new item to the restaurant menu'}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div>
-                    <Label htmlFor="name">Item Name</Label>
+                    <Label htmlFor="name" className="text-slate-700">Item Name</Label>
                     <Input
                       id="name"
                       value={menuItemForm.name}
                       onChange={(e) => setMenuItemForm({...menuItemForm, name: e.target.value})}
+                      className="border-slate-200 focus:border-[#D9F99D] focus:ring-[#D9F99D]"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-slate-700">Description</Label>
                     <Textarea
                       id="description"
                       value={menuItemForm.description}
                       onChange={(e) => setMenuItemForm({...menuItemForm, description: e.target.value})}
+                      className="border-slate-200 focus:border-[#D9F99D] focus:ring-[#D9F99D]"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category" className="text-slate-700">Category</Label>
                     <Select value={menuItemForm.category} onValueChange={(value) => setMenuItemForm({...menuItemForm, category: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -566,17 +576,18 @@ export default function RestaurantModule() {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="price">Price (₦)</Label>
+                    <Label htmlFor="price" className="text-slate-700">Price (₦)</Label>
                     <Input
                       id="price"
                       type="number"
                       value={menuItemForm.price || ''}
                       onChange={(e) => setMenuItemForm({...menuItemForm, price: parseFloat(e.target.value) || 0})}
+                      className="border-slate-200 focus:border-[#D9F99D] focus:ring-[#D9F99D]"
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={editMode ? handleUpdateMenuItem : handleAddMenuItem}>
+                  <Button onClick={editMode ? handleUpdateMenuItem : handleAddMenuItem} className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80">
                     {editMode ? 'Update Item' : 'Add Item'}
                   </Button>
                 </DialogFooter>
@@ -586,37 +597,38 @@ export default function RestaurantModule() {
 
           <div className="grid gap-4">
             {menuItems.map((item) => (
-              <Card key={item.id}>
-                <CardHeader>
+              <Card key={item.id} className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                <CardHeader className="pb-3 pt-5 px-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>{item.name}</CardTitle>
-                      <CardDescription>{item.description}</CardDescription>
+                      <CardTitle className="text-lg text-slate-900">{item.name}</CardTitle>
+                      <CardDescription className="text-slate-500">{item.description}</CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={item.isAvailable ? "default" : "secondary"}>
+                      <Badge className={item.isAvailable ? 'bg-[#D9F99D] text-emerald-700' : 'bg-slate-100 text-slate-500'}>
                         {item.isAvailable ? 'Available' : 'Hidden'}
                       </Badge>
-                      <span className="font-bold">{currencyFormatter.format(item.price)}</span>
+                      <span className="font-bold text-slate-900">{currencyFormatter.format(item.price)}</span>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <Badge variant="outline">{item.category}</Badge>
+                <CardContent className="px-5 pb-5 pt-0">
+                  <div className="flex justify-between items-center pt-3">
+                    <Badge variant="outline" className="border-slate-200 text-slate-500">{item.category}</Badge>
                     <div className="flex space-x-2">
                       <Button 
                         size="sm" 
-                        variant="outline"
+                        variant="ghost"
+                        className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                         onClick={() => handleToggleMenuItemAvailability(item.id)}
                       >
                         {item.isAvailable ? 'Hide' : 'Show'}
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEditMenuItem(item)}>
+                      <Button size="sm" variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100" onClick={() => handleEditMenuItem(item)}>
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleDeleteMenuItem(item.id)}>
+                      <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteMenuItem(item.id)}>
                         <Trash2 className="w-4 h-4 mr-1" />
                         Delete
                       </Button>
@@ -631,12 +643,12 @@ export default function RestaurantModule() {
         <TabsContent value="orders" className="space-y-4">
           <div className="grid gap-4">
             {orders.map((order) => (
-              <Card key={order.id}>
-                <CardHeader>
+              <Card key={order.id} className="rounded-2xl border-0 shadow-sm bg-white transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                <CardHeader className="pb-3 pt-5 px-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>Order #{order.orderNumber}</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-lg text-slate-900">Order #{order.orderNumber}</CardTitle>
+                      <CardDescription className="text-slate-500">
                         {order.orderType} • {new Date(order.createdAt).toLocaleString()}
                       </CardDescription>
                     </div>
@@ -644,33 +656,34 @@ export default function RestaurantModule() {
                       <Badge className={getStatusColor(order.status)}>
                         {order.status}
                       </Badge>
-                      <span className="font-bold">{currencyFormatter.format(order.totalAmount)}</span>
+                      <span className="font-bold text-slate-900">{currencyFormatter.format(order.totalAmount)}</span>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <CardContent className="px-5 pb-5 pt-0">
+                  <div className="space-y-4 pt-3">
                     <div>
-                      <h5 className="font-medium mb-2">Order Items:</h5>
+                      <h5 className="font-medium text-slate-700 mb-2">Order Items:</h5>
                       <div className="space-y-1">
                         {order.items.map((item) => (
                           <div key={item.id} className="flex justify-between text-sm">
-                            <span>{item.menuItem.name} x {item.quantity}</span>
-                            <span>{currencyFormatter.format(item.subtotal)}</span>
+                            <span className="text-slate-500">{item.menuItem.name} x {item.quantity}</span>
+                            <span className="text-slate-900">{currencyFormatter.format(item.subtotal)}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                     {order.notes && (
                       <div>
-                        <h5 className="font-medium mb-1">Notes:</h5>
-                        <p className="text-sm text-muted-foreground">{order.notes}</p>
+                        <h5 className="font-medium text-slate-700 mb-1">Notes:</h5>
+                        <p className="text-sm text-slate-500">{order.notes}</p>
                       </div>
                     )}
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 pt-2">
                       <Button 
                         size="sm" 
-                        variant="outline"
+                        variant="ghost"
+                        className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                         onClick={() => {
                           setSelectedOrder(order)
                           setShowBillDialog(true)
@@ -681,7 +694,8 @@ export default function RestaurantModule() {
                       </Button>
                       <Button 
                         size="sm" 
-                        variant="outline"
+                        variant="ghost"
+                        className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                         onClick={() => {
                           setSelectedOrder(order)
                           setShowKitchenDialog(true)
@@ -693,6 +707,7 @@ export default function RestaurantModule() {
                       {order.status === 'Pending' && (
                         <Button 
                           size="sm"
+                          className="bg-[#D9F99D] text-slate-900 hover:bg-[#D9F99D]/80"
                           onClick={() => handleSendToKitchen(order)}
                         >
                           <Send className="w-4 h-4 mr-1" />
@@ -710,10 +725,10 @@ export default function RestaurantModule() {
 
       {/* Bill Dialog */}
       <Dialog open={showBillDialog} onOpenChange={setShowBillDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Order Bill</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-slate-900">Order Bill</DialogTitle>
+            <DialogDescription className="text-slate-500">
               Order #{selectedOrder?.orderNumber}
             </DialogDescription>
           </DialogHeader>
@@ -722,27 +737,27 @@ export default function RestaurantModule() {
               <div className="space-y-2">
                 {selectedOrder.items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
-                    <span>{item.menuItem.name} x {item.quantity}</span>
-                    <span>{currencyFormatter.format(item.subtotal)}</span>
+                    <span className="text-slate-500">{item.menuItem.name} x {item.quantity}</span>
+                    <span className="text-slate-900">{currencyFormatter.format(item.subtotal)}</span>
                   </div>
                 ))}
               </div>
               <div className="border-t pt-2 space-y-1">
                 <div className="flex justify-between text-sm">
-                  <span>Subtotal:</span>
-                  <span>{currencyFormatter.format(selectedOrder.subtotal)}</span>
+                  <span className="text-slate-500">Subtotal:</span>
+                  <span className="text-slate-900">{currencyFormatter.format(selectedOrder.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Discount:</span>
-                  <span>-{currencyFormatter.format(selectedOrder.discount)}</span>
+                  <span className="text-slate-500">Discount:</span>
+                  <span className="text-slate-900">-{currencyFormatter.format(selectedOrder.discount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Tax:</span>
-                  <span>{currencyFormatter.format(selectedOrder.tax)}</span>
+                  <span className="text-slate-500">Tax:</span>
+                  <span className="text-slate-900">{currencyFormatter.format(selectedOrder.tax)}</span>
                 </div>
                 <div className="flex justify-between font-bold">
-                  <span>Total:</span>
-                  <span>{currencyFormatter.format(selectedOrder.totalAmount)}</span>
+                  <span className="text-slate-900">Total:</span>
+                  <span className="text-slate-900">{currencyFormatter.format(selectedOrder.totalAmount)}</span>
                 </div>
               </div>
             </div>
@@ -752,28 +767,28 @@ export default function RestaurantModule() {
 
       {/* Kitchen Dialog */}
       <Dialog open={showKitchenDialog} onOpenChange={setShowKitchenDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Kitchen Order</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-slate-900">Kitchen Order</DialogTitle>
+            <DialogDescription className="text-slate-500">
               Order #{selectedOrder?.orderNumber}
             </DialogDescription>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <h5 className="font-medium">Items to Prepare:</h5>
+                <h5 className="font-medium text-slate-700">Items to Prepare:</h5>
                 {selectedOrder.items.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm p-2 border rounded">
-                    <span>{item.menuItem.name}</span>
-                    <span className="font-medium">x {item.quantity}</span>
+                  <div key={item.id} className="flex justify-between text-sm p-2 border border-slate-200 rounded-lg">
+                    <span className="text-slate-900">{item.menuItem.name}</span>
+                    <span className="font-medium text-slate-900">x {item.quantity}</span>
                   </div>
                 ))}
               </div>
               {selectedOrder.notes && (
                 <div>
-                  <h5 className="font-medium mb-1">Special Instructions:</h5>
-                  <p className="text-sm text-muted-foreground bg-yellow-50 p-2 rounded">
+                  <h5 className="font-medium text-slate-700 mb-1">Special Instructions:</h5>
+                  <p className="text-sm text-slate-500 bg-yellow-50 p-2 rounded-lg">
                     {selectedOrder.notes}
                   </p>
                 </div>

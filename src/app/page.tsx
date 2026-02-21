@@ -1,24 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { 
   Hotel, 
   Utensils, 
   Package, 
   Users, 
   TrendingUp,
-  Bed,
-  UserCheck,
-  ShoppingCart,
-  Calculator,
-  CreditCard
+  CircleDot
 } from 'lucide-react'
 
-// Import module components
+import Logo from '@/components/ui/logo'
 import FrontOfficeModule from '@/components/modules/FrontOfficeModule'
 import RestaurantModule from '@/components/modules/RestaurantModule'
 import InventoryModule from '@/components/modules/InventoryModule'
@@ -32,98 +24,107 @@ const currencyFormatter = new Intl.NumberFormat('en-NG', {
   maximumFractionDigits: 0,
 })
 
+const navItems = [
+  { id: 'front-office', label: 'Front Office', icon: Hotel },
+  { id: 'restaurant', label: 'Restaurant', icon: Utensils },
+  { id: 'inventory', label: 'Inventory', icon: Package },
+  { id: 'payroll', label: 'Payroll', icon: Users },
+  { id: 'accounting', label: 'Accounting', icon: TrendingUp },
+]
+
 export default function HomePage() {
   const [activeModule, setActiveModule] = useState('front-office')
 
+  const renderModule = () => {
+    switch (activeModule) {
+      case 'front-office':
+        return <FrontOfficeModule />
+      case 'restaurant':
+        return <RestaurantModule />
+      case 'inventory':
+        return <InventoryModule />
+      case 'payroll':
+        return <PayrollModule />
+      case 'accounting':
+        return <AccountingModule />
+      default:
+        return <FrontOfficeModule />
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-lg overflow-hidden">
-                <img src="/logo.png" alt="MORAV RMS" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">MORAV RMS</h1>
-                <p className="text-sm text-slate-500">Hospitality Management System</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="text-green-600 border-green-600">
-                System Online
-              </Badge>
-              <div className="text-sm text-slate-600">
-                {currencyFormatter.format(2500000)} Total Revenue
-              </div>
+    <div className="min-h-screen bg-[#F1F5F9]">
+      {/* Sidebar */}
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-200/60 flex flex-col z-50">
+        {/* Logo Section */}
+        <div className="p-5 border-b border-slate-200/60">
+          <div className="flex items-center gap-3">
+            <Logo width={36} height={36} />
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">MORAV</h1>
+              <p className="text-xs text-slate-500">Hospitality Management</p>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeModule} onValueChange={setActiveModule} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-white p-1 rounded-lg shadow-sm">
-            <TabsTrigger 
-              value="front-office" 
-              className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-            >
-              <Hotel className="w-4 h-4" />
-              <span>Front Office</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="restaurant" 
-              className="flex items-center space-x-2 data-[state=active]:bg-green-600 data-[state=active]:text-white"
-            >
-              <Utensils className="w-4 h-4" />
-              <span>Restaurant</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="inventory" 
-              className="flex items-center space-x-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
-            >
-              <Package className="w-4 h-4" />
-              <span>Inventory</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="payroll" 
-              className="flex items-center space-x-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-            >
-              <Users className="w-4 h-4" />
-              <span>Payroll</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="accounting" 
-              className="flex items-center space-x-2 data-[state=active]:bg-red-600 data-[state=active]:text-white"
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span>Accounting</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = activeModule === item.id
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveModule(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-300 ${
+                  isActive
+                    ? 'bg-[#D9F99D] text-slate-900 rounded-xl'
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-xl'
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? 'text-slate-900' : 'text-slate-500'}`} />
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
+        </nav>
 
-          <TabsContent value="front-office" className="space-y-6">
-            <FrontOfficeModule />
-          </TabsContent>
+        {/* Sidebar Footer */}
+        <div className="p-4 border-t border-slate-200/60">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <span className="w-2 h-2 rounded-full bg-[#86EFAC] animate-pulse"></span>
+            <span>System Online</span>
+          </div>
+        </div>
+      </aside>
 
-          <TabsContent value="restaurant" className="space-y-6">
-            <RestaurantModule />
-          </TabsContent>
+      {/* Main Content Area */}
+      <div className="pl-64">
+        {/* Header */}
+        <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b border-slate-200/60">
+          <div className="px-6 py-4 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-semibold text-slate-900">
+                {navItems.find(n => n.id === activeModule)?.label}
+              </h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="px-3 py-1.5 rounded-full border border-slate-200 bg-white text-xs font-medium text-slate-900 flex items-center gap-2">
+                <CircleDot className="w-3 h-3 text-[#86EFAC]" />
+                <span>System Online</span>
+              </div>
+              <div className="px-3 py-1.5 rounded-full border border-slate-200 bg-white text-xs font-medium text-slate-900">
+                {currencyFormatter.format(2500000)} Revenue
+              </div>
+            </div>
+          </div>
+        </header>
 
-          <TabsContent value="inventory" className="space-y-6">
-            <InventoryModule />
-          </TabsContent>
-
-          <TabsContent value="payroll" className="space-y-6">
-            <PayrollModule />
-          </TabsContent>
-
-          <TabsContent value="accounting" className="space-y-6">
-            <AccountingModule />
-          </TabsContent>
-        </Tabs>
-      </main>
+        {/* Main Content */}
+        <main className="p-6">
+          {renderModule()}
+        </main>
+      </div>
     </div>
   )
 }
